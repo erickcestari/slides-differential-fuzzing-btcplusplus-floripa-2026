@@ -1,6 +1,6 @@
 ---
 theme: default
-title: Differential Fuzzing When Implementations Disagree
+title: Differential Fuzzing
 info: |
   ## Differential Fuzzing When Implementations Disagree
 class: text-center
@@ -17,7 +17,6 @@ mdc: true
   <img src="./github-qr.png" alt="QR Code" class="w-30 h-30" />
 </div>
 
-
 ---
 ---
 <img src="./images/receive_block.png" style="width: 800px; height: 500px; object-fit: contain; margin: 0 auto; display: block;" />
@@ -29,11 +28,11 @@ mdc: true
 <img src="./images/chain_split.png" style="width: 800px; height: 500px; object-fit: contain; margin: 0 auto; display: block;" />
 ---
 
-## Same Spec, Different Behavior
+## Same Input, Different Behavior
 
 **The problem:**
-- Network Instability
-- Bad User Experience
+- Network partitioning
+- Double-spend attacks
 - Potential Security Issues
 
 **Traditional approach:**
@@ -41,18 +40,11 @@ mdc: true
 - Manual cross-implementation testing
 - Reactive fixes after failures
 
-<!--
-Different Lightning implementations can interpret the same data differently. Real-world impact: Poor user experience where success depends on which implementation you're using. Traditional approach: Wait for users to report bugs, manual testing between implementations, reactive fixes.
--->
 ---
 class: flex items-center justify-center text-center
 ---
 
 # How do we systematically find these discrepancies before they cause problems?
-
-<!--
-How do we systematically find these discrepancies before they cause problems?
--->
 
 ---
 class: flex items-center justify-center text-center
@@ -60,62 +52,18 @@ class: flex items-center justify-center text-center
 
 # Solution: Differential Fuzzing
 
-<!--
-So the solution is by doing differential fuzzing. The theme of this presentation :)
--->
-
 ---
 
 ## Who am I?
 
-* Erick Cestari
-* Vinteum Grantee (Bitcoin development funding)
-* Contributor of Bitcoinfuzz. Found 15+ bugs across Lightning implementations (we'll see some of them)
+### Erick Cestari
+* Bitcoinfuzz maitainer. 50+ bugs found across Bitcoin libraries
+* Security researcher, have made several responsible disclosures.
+* Vinteum Grantee
 
-<!--
-But first, Who am I?
-
-My name is Erick Cestari.
-
-I am a Vinteum grantee. That's Bitcoin development funding for those who aren't familiar.
-
-I'm the contributor of bitcoinfuzz, where I've found over 15 bugs across various Lightning implementations and reported some security disclosures.
--->
----
----
-## Bitcoin: Code as Specification
-If we built a new Bitcoin implementation today, where would we find the specification?
-
-* Bitcoin Core codebase. The reference implementation
-* No formal written specification document
-* Consensus rules are implicit in the code
-
-<!--
-Bitcoin has an interesting characteristic. There's no formal specification document. 
-If you want to build a new Bitcoin implementation today, you essentially have to reverse-engineer Bitcoin Core.
-The consensus rules are implicit in the code, which means implementation differences can be catastrophic.
--->
----
-
-## Lightning: Specification-First Approach
-
-Lightning Network took a different approach with BOLT specifications
-
-* BOLT = Basis of Lightning Technology
-* Formal written specifications for all protocol aspects
-* Multiple implementations can follow the same spec
-* But... specifications can be ambiguous or incomplete
-
-<!--
-Lightning Network learned from Bitcoin's approach and took a specification-first approach.
-BOLT stands for Basis of Lightning Technology. These are formal written specifications that cover all aspects of the Lightning protocol.
-This allows multiple implementations to follow the same spec and theoretically be compatible.
-
-But here's the catch. Specifications can be ambiguous or incomplete. 
-Even with a formal spec, different teams can interpret the same requirements differently.
-This is where our differential fuzzing comes in. To find these interpretation differences systematically.
--->
-
+<div class="absolute bottom-4 right-10">
+  <img src="./github-qr.png" alt="QR Code" class="w-30 h-30" />
+</div>
 ---
 ---
 ## Edge Cases
