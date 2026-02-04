@@ -1,8 +1,8 @@
 ---
 theme: default
-title: Differential Fuzzing on ⚡
+title: Differential Fuzzing When Implementations Disagree
 info: |
-  ## Differential Fuzzing on ⚡
+  ## Differential Fuzzing When Implementations Disagree
 class: text-center
 colorSchema: light
 drawings:
@@ -10,47 +10,23 @@ drawings:
 mdc: true
 ---
 
-# Differential Fuzzing on ⚡
-
-<!--
-Hello, my name is Erick Cestari. 
-
-I will talk about differential fuzzing on the Lightning Network. A technique to find bugs between different Lightning implementations.
--->
+# Differential Fuzzing
+## When Implementations Disagree
 
 <div class="absolute bottom-4 right-10">
   <img src="./github-qr.png" alt="QR Code" class="w-30 h-30" />
 </div>
 
----
-
-<img src="./alice_pay_bob.png" style="width: 800px; height: 500px; object-fit: contain; margin: 0 auto; display: block;" />
-
-<!--
-So imagine this scenario: Bob is trying to sell coffee to Alice. 
-Bob is using NLightning to generate the invoice, and Alice is using Rust-Lightning to make the payment.
-Bob generates and sends the invoice to Alice.
--->
 
 ---
-
-<img src="./alice_fail_decode.png" style="width: 800px; height: 500px; object-fit: contain; margin: 0 auto; display: block;" />
-
-<!--
-Alice tries to pay the invoice using Rust-Lightning, but it fails to decode the invoice. 
-She gets an error and can't complete the payment.
--->
-
 ---
-
-<img src="./carol_pay_bob.png" style="width: 800px; height: 500px; object-fit: contain; margin: 0 auto; display: block;" />
-
-<!--
-Frustrated, Alice asks her friend Carol for help. 
-Carol tries to pay the same invoice using her LND node, and this time it succeeds! 
-Same invoice, different implementation, different result.
--->
-
+<img src="./images/receive_block.png" style="width: 800px; height: 500px; object-fit: contain; margin: 0 auto; display: block;" />
+---
+---
+<img src="./images/reject_block.png" style="width: 800px; height: 500px; object-fit: contain; margin: 0 auto; display: block;" />
+---
+---
+<img src="./images/chain_split.png" style="width: 800px; height: 500px; object-fit: contain; margin: 0 auto; display: block;" />
 ---
 
 ## Same Spec, Different Behavior
