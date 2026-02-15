@@ -66,30 +66,6 @@ class: flex items-center justify-center text-center
 </div>
 ---
 ---
-## Edge Cases
-When the spec says `r field should contain one or more entries`.
-What happens with zero entries?
-
-This is where implementations diverge:
-- Some reject it (Rust-Lightning, Core Lightning)  
-- Others accept it (LND, Eclair)
-
-Differential fuzzing systematically explores these specification gaps.
-
-<!--
-So here's the core challenge with specifications. Even when they're comprehensive like BOLT, they can't anticipate every possible edge case.
-
-Take this real example from our fuzzing results: The BOLT11 specification says the 'r' field should contain "one or more entries" for routing information. Sounds clear, right?
-
-But what happens when you encounter an 'r' field that exists but contains zero entries? The specification doesn't explicitly address this scenario.
-
-And this is exactly where we see implementations diverge. Rust-Lightning and Core Lightning take a strict interpretation. They reject invoices with empty 'r' fields. Meanwhile, LND and Eclair are more permissive. They accept these invoices.
-
-Neither approach is necessarily wrong. They're just different interpretations of an ambiguous specification.
-
-This is the perfect example of why differential fuzzing is so valuable. Instead of waiting for users to discover these incompatibilities in production, we can systematically generate edge cases like this and find where implementations behave differently. This helps us identify specification gaps before they cause real-world payment failures.
--->
----
 
 ## So let's start simple, what is fuzzing?
 
@@ -285,51 +261,6 @@ This a High Level view of the C code compiled to machine code without coverage i
 This a High Level view of the C code compiled to machine code with coverage instrumentation. We can see that it adds function calls to send coverage information to the fuzzer.
 -->
 ---
-
-## Fuzzing Finds Crashes
-
-What is the problem with this double function?
-```rust
-use libfuzzer_sys::fuzz_target;
-
-fn double(x: i32) -> i32 {
-    x * 2
-}
-
-fuzz_target!(|data: &[u8]| {
-    if let Some(x) = consume_i32(data) {
-        let _ = double(x);
-    }
-});
-```
-
-<!--
-This is an example of a bug that fuzzing can find. We have this double function that receives a signed integer 32 bits that then will be multiplied by 2. In this example we can see that the double function doesn't handle overflow, so running the fuzzer we will see that it will crash by overflow.
--->
-
----
----
-## When Fuzzing Gets Stuck
-
-```rust
-use libfuzzer_sys::fuzz_target;
-
-fn double(x: i32) -> Option<i32> {
-    x.checked_mul(2)
-}
-
-fuzz_target!(|data: &[u8]| {
-    if let Some(x) = consume_i32(data) {
-        let _ = double(x);
-    }
-});
-```
-
-<!--
-Now let's try with the function fixed to see what happens. We can see that the fuzzer get stuck because it explored all the code and maximized the coverage and didn't find any crashes.
--->
-
----
 ---
 ## Coverage-Guided Fuzzing in Action
 
@@ -337,7 +268,7 @@ Now let's try with the function fixed to see what happens. We can see that the f
 use libfuzzer_sys::fuzz_target;
 
 fuzz_target!(|data: &[u8]| {
-    if data.len() != 6 {
+    if data.len() != 7 {
         return;
     }
 
@@ -345,9 +276,11 @@ fuzz_target!(|data: &[u8]| {
         if data[1] == b'u' {
             if data[2] == b'z' {
                 if data[3] == b'z' {
-                    if data[4] == b'l' {
-                        if data[5] == b'n' {
-                            panic!("Crash triggered: found the magic sequence!");
+                    if data[4] == b'b' {
+                        if data[5] == b't' {
+                            if data[6] == b'c' {
+                                panic!("Found the magic sequence!");
+                            }
                         }
                     }
                 }
@@ -563,6 +496,7 @@ The downside of this approach is that we lose the coverage instrumentation we ge
 
 This FFI approach works for any language that can expose a C-compatible interface, whether it's Python, JavaScript, or other VM-based languages.
 -->
+
 ---
 ---
 ## Let's breakdown a target in Bitcoinfuzz
@@ -757,34 +691,6 @@ class: flex items-center justify-center text-center
 1. rust-lightning: lightningdevkit/rust-lightning#3998
 1. bolts: lightning/bolts#1279
 1. rust-lightning: lightningdevkit/rust-lightning#4018
-
----
----
-
-## Improved signature specification in BOLT11
-
-```mermaid
-flowchart LR
-    A[Start: Validate invoice signature] --> B{n field present?}
-
-    B -- Yes --> C[Verify signature with pubkey<br/>Signature MUST be low-S]
-    C -->|valid| Z[ACCEPT]
-    C -->|invalid| X1[Reject: invalid signature]:::reject
-
-    B -- No --> D[Recover pubkey from signature<br/>High-S or low-S accepted]
-    D -->|valid| Z
-    D -->|invalid| X1
-
-    classDef reject fill:#ffe6e6,stroke:#cc0000,color:#990000;
-```
-
----
----
-## C-Lightning accepting invalid invoices
-
-C-Lightning was accepting invoices with routing hints without validating the public key format.
-
-<img src="./core-lightning.png" style="width: 900px; height: 320px; object-fit: contain; margin: 0 auto; display: block;" />
 
 ---
 ---
